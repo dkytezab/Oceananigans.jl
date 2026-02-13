@@ -156,3 +156,11 @@ function restore_prognostic_state!(restored::Clock, from)
 end
 
 restore_prognostic_state!(::Clock, ::Nothing) = nothing
+
+# If the clock is at iteration 0, update the state (paranoid).
+function maybe_update_state!(model, callbacks)
+    if model.clock.iteration == 0
+        update_state!(model, callbacks)
+    end
+    return nothing
+end
