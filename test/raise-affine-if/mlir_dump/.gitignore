@@ -1,0 +1,7 @@
+# Ignore all MLIR dump files (regenerated on each test run, can be large)
+*.mlir
+*.txt
+*.tar.gz
+
+# Keep this .gitignore so the folder is tracked in git
+!.gitignore
