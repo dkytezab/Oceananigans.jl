@@ -19,6 +19,58 @@ using Reactant: @trace
         return nothing
     end
 
+    @testset "3D (Periodic, Periodic, Flat) — ExplicitFreeSurface" begin
+        @info "  Testing HFSM 3D (Periodic, Periodic, Flat)..."
+        grid = RectilinearGrid(reactant_arch; size=(4, 4), extent=(1, 1),
+                               topology=(Periodic, Periodic, Flat))
+        model = HydrostaticFreeSurfaceModel(grid;
+                    free_surface = ExplicitFreeSurface(),
+                    timestepper = :QuasiAdamsBashforth2,
+                    buoyancy = nothing,
+                    tracers = ())
+
+        @testset "Construction" begin
+            @test model isa HydrostaticFreeSurfaceModel
+            @test model.grid.architecture isa ReactantState
+            @test model.free_surface isa ExplicitFreeSurface
+        end
+
+        @testset "Compiled time_step!" begin
+            @info "    Compiling and running time_step!..."
+            Δt = 0.001
+            Nt = 4
+            compiled_run! = @compile raise=true raise_first=true sync=true run_timesteps!(model, Δt, Nt)
+            compiled_run!(model, Δt, Nt)
+            @test model.clock.iteration == Nt
+        end
+    end
+
+    @testset "3D (Periodic, Periodic, Periodic) — ExplicitFreeSurface" begin
+        @info "  Testing HFSM 3D (Periodic, Periodic, Periodic)..."
+        grid = RectilinearGrid(reactant_arch; size=(4, 4, 4), extent=(1, 1, 1),
+                               topology=(Periodic, Periodic, Periodic))
+        model = HydrostaticFreeSurfaceModel(grid;
+                    free_surface = ExplicitFreeSurface(),
+                    timestepper = :QuasiAdamsBashforth2,
+                    buoyancy = nothing,
+                    tracers = ())
+
+        @testset "Construction" begin
+            @test model isa HydrostaticFreeSurfaceModel
+            @test model.grid.architecture isa ReactantState
+            @test model.free_surface isa ExplicitFreeSurface
+        end
+
+        @testset "Compiled time_step!" begin
+            @info "    Compiling and running time_step!..."
+            Δt = 0.001
+            Nt = 4
+            compiled_run! = @compile raise=true raise_first=true sync=true run_timesteps!(model, Δt, Nt)
+            compiled_run!(model, Δt, Nt)
+            @test model.clock.iteration == Nt
+        end
+    end
+
     @testset "3D (Periodic, Periodic, Bounded) — ExplicitFreeSurface" begin
         @info "  Testing HFSM 3D (Periodic, Periodic, Bounded)..."
         grid = RectilinearGrid(reactant_arch; size=(4, 4, 4), extent=(1, 1, 1),
